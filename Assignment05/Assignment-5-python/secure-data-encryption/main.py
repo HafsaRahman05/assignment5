@@ -61,18 +61,23 @@ def retrieve_data(user_id, passkey):
 # Admin Login Page
 def login_page():
     st.title("🔐 Admin Reauthorization")
-    username = st.text_input("👤 Admin Username")
-    password = st.text_input("🔑 Admin Password", type="password")
+    username = st.text_input("👤 Admin Username", key="admin_user")
+    password = st.text_input("🔑 Admin Password", type="password", key="admin_pass")
 
     if st.button("Login"):
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             st.session_state.authorized = True
             st.session_state.failed_attempts.clear()
             st.success("✅ Login successful!")
-            st.experimental_rerun()
+            # Set a rerun flag
+            st.session_state.login_success = True
         else:
             st.error("❌ Invalid credentials. Try again.")
 
+    # Call rerun outside the button callback
+    if st.session_state.get("login_success"):
+        del st.session_state["login_success"]
+        st.experimental_rerun()
 # Home Page
 def home_page():
     st.title("🔒 Secure Data Encryption System")
